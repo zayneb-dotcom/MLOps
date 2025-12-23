@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Pytest cache
+.pytest_cache/
+
+# Python packaging
+dist/
+build/
+*.egg-info/
+
+# MLflow and artifacts
+mlruns/
+mlflow.db
+model.pkl
+*.pth
+*.ckpt
+artifacts/
+
+# Conda/pip env files
+environment.yml
