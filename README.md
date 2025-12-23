@@ -67,22 +67,3 @@ Modifications demandées (exemples):
 from sklearn.metrics import precision_score
 mlflow.log_metric("precision", precision_score(y_test, preds, average="macro"))
 ```
-
-Questions / Réponses:
-
-- Pourquoi MLflow est-il indispensable en MLOps ?
-  MLflow fournit un tracking centralisé des expériences, paramètres, métriques et modèles. Il facilite la reproductibilité, la comparaison de runs, la gestion des artefacts et l'intégration dans des pipelines CI/CD et de déploiement. En MLOps, le suivi systématique et la traçabilité sont essentiels; MLflow automatise et standardise ces aspects.
-
-- Quelle différence entre un `run` et un `experiment` ?
-  Un `experiment` est un conteneur logique rassemblant plusieurs `runs`. Un `run` correspond à une exécution unique (une tentative d'entraînement) avec ses paramètres, métriques et artefacts; un `experiment` permet d'organiser et comparer plusieurs runs du même projet.
-
-- Peut-on reproduire un modèle sans tracking ?
-  Théoriquement oui si vous conservez manuellement le code, la seed, les données et les hyperparamètres. En pratique, sans tracking il est facile d'oublier des détails (versions, preprocessings, seeds) rendant la reproduction difficile. Le tracking réduit ces risques.
-
----
-
-Si vous voulez, je peux:
-- Installer les dépendances et lancer une exécution de `train_mlflow.py` ici.
-- Lancer `mlflow ui` pour vous (si vous confirmez).
-
-Dites quelle action je dois faire ensuite.
