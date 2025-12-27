@@ -67,3 +67,33 @@ Modifications demandées (exemples):
 from sklearn.metrics import precision_score
 mlflow.log_metric("precision", precision_score(y_test, preds, average="macro"))
 ```
+
+## Automatisation (CI & versioning de données)
+
+Deux workflows GitHub Actions ont été ajoutés pour automatiser les tests et le versioning des données :
+
+- `.github/workflows/automation.yml` : installe les dépendances (`requirements.txt`) et exécute `pytest` sur push/PR vers `main` ou `master`.
+- `.github/workflows/dvc_data_versioning.yml` : déclenché quand `data/**` change (ou manuellement). Il installe `dvc`, exécute `dvc add -R data`, commit les fichiers `.dvc` / changements Git, pousse le commit et exécute `dvc push` vers le remote configuré.
+
+Secrets recommandés pour DVC (configurer dans les Settings > Secrets du dépôt) :
+- `DVC_REMOTE_URL` (ex: `s3://my-bucket/path` ou autre remote DVC)
+- pour S3 : `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+
+Exemples locaux pour initialiser un remote DVC et pousser les données :
+
+```bash
+# ajouter un remote (ex: s3)
+dvc remote add -d origin s3://my-bucket/path
+dvc remote modify origin access_key_id $AWS_ACCESS_KEY_ID
+dvc remote modify origin secret_access_key $AWS_SECRET_ACCESS_KEY
+
+# tracker et pousser
+dvc add -R data
+git add -A
+git commit -m "chore(dvc): track data"
+git push
+dvc push
+```
+
+Notes : si vous utilisez un autre provider (GCP, Azure), configurez le remote DVC correspondant et fournissez les secrets nécessaires dans GitHub.
+

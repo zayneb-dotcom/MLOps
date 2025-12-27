@@ -1,0 +1,70 @@
+name: DVC Data Versioning
+
+on:
+  push:
+    paths:
+      - 'data/**'
+  workflow_dispatch: {}
+
+jobs:
+  version-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install DVC
+        run: |
+          python -m pip install --upgrade pip
+          pip install 'dvc[s3]'
+
+      - name: Configure DVC remote (optional)
+        env:
+          DVC_REMOTE_URL: ${{ secrets.DVC_REMOTE_URL }}
+        run: |
+          if [ -n "$DVC_REMOTE_URL" ]; then
+            dvc remote add -f origin "$DVC_REMOTE_URL" || true
+          else
+            echo "No DVC_REMOTE_URL set; using existing dvc config"
+          fi
+
+      - name: Add/track data with DVC, commit and push
+        env:
+          GIT_USER_NAME: 'github-actions[bot]'
+          GIT_USER_EMAIL: 'github-actions[bot]@users.noreply.github.com'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          git config user.name "$GIT_USER_NAME"
+          git config user.email "$GIT_USER_EMAIL"
+
+          # Recursively add data/ to DVC (creates .dvc files / dvc-tracked directories)
+          if [ -d data ] || [ -f data ]; then
+            dvc add -R data || true
+          else
+            echo "No data/ directory found, skipping dvc add"
+          fi
+
+          # Stage changes and commit if any
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No DVC/Git changes to commit"
+          else
+            git commit -m "chore(dvc): update data version"
+            git push
+          fi
+
+          # Push data to DVC remote
+          dvc push || { echo "dvc push failed"; exit 1; }
+
+      - name: Show DVC status
+        run: dvc status || true
