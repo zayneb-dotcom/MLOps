@@ -37,3 +37,4 @@ artifacts/
 
 # Conda/pip env files
 environment.yml
+/mlruns

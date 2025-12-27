@@ -1,0 +1,9 @@
+stages:
+  train:
+    cmd: python train_mlflow.py --n_estimators 150 --random_state 42
+    deps:
+      - train_mlflow.py
+      - data/iris_data.csv
+    outs:
+      - mlruns
+      - artifacts/feature_importances.csv

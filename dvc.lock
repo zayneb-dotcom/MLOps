@@ -1,0 +1,19 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python train_mlflow.py --n_estimators 150 --random_state 42
+    deps:
+    - path: data/iris_data.csv
+      md5: 45109f850511f9474665f2c26f4c79f3
+      size: 2621
+    - path: train_mlflow.py
+      md5: e0ee36f3efe744c5e7471ba674da7102
+      size: 2580
+    outs:
+    - path: artifacts/feature_importances.csv
+      md5: d08c284edc5876c1399a442ebed980b0
+      size: 172
+    - path: mlruns
+      md5: 6a24fa3642762160180191f841adc364.dir
+      size: 229083
+      nfiles: 18
