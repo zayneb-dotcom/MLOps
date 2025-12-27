@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           # pin a compatible fsspec to avoid ImportError in scmrepo/dulwich
-          pip install 'fsspec==2023.10.0'
+          python -m pip install --upgrade --force-reinstall "fsspec==2023.9.2"
           pip install 'dvc[s3]'
 
       - name: Configure DVC remote (optional)
