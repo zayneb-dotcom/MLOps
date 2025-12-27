@@ -5,5 +5,10 @@ stages:
       - train_mlflow.py
       - data/iris_data.csv
     outs:
-      - mlruns
       - artifacts/feature_importances.csv
+  train_real:
+    cmd: python real_model/experiment_runner.py
+    deps:
+      - real_model/train_real.py
+    outs:
+      - real_model/artifacts
