@@ -38,6 +38,10 @@ jobs:
             echo "No DVC_REMOTE_URL set; using existing dvc config"
           fi
 
+      - name: Force reinstall `fsspec` for DVC compatibility
+        run: |
+          python -m pip install --upgrade --force-reinstall "fsspec==2023.9.2"
+
       - name: DVC pull
         run: |
           # try to restore data cache before reproducing
