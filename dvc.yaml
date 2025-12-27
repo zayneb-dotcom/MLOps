@@ -3,7 +3,7 @@ stages:
     cmd: python train_mlflow.py --n_estimators 150 --random_state 42
     deps:
       - train_mlflow.py
-      - data/iris_data.csv
+      - data/train.csv
     outs:
       - artifacts/feature_importances.csv
   train_real:

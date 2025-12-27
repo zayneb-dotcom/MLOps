@@ -3,9 +3,9 @@ stages:
   train:
     cmd: python train_mlflow.py --n_estimators 150 --random_state 42
     deps:
-    - path: data/iris_data.csv
-      md5: 45109f850511f9474665f2c26f4c79f3
-      size: 2621
+    - path: data/train.csv
+      md5: 57f9da7d8ae3b43d0771e72ade28f8bc
+      size: 4642913
     - path: train_mlflow.py
       md5: e0ee36f3efe744c5e7471ba674da7102
       size: 2580
@@ -13,7 +13,14 @@ stages:
     - path: artifacts/feature_importances.csv
       md5: d08c284edc5876c1399a442ebed980b0
       size: 172
-    - path: mlruns
-      md5: 6a24fa3642762160180191f841adc364.dir
-      size: 229083
-      nfiles: 18
+  train_real:
+    cmd: python real_model/experiment_runner.py
+    deps:
+    - path: real_model/train_real.py
+      md5: aadbbfcb5ab85373dc97ec5515a8489d
+      size: 3160
+    outs:
+    - path: real_model/artifacts
+      md5: e51c6090e4ad7b5f0c8dc079f1c0eb1a.dir
+      size: 6286
+      nfiles: 6
