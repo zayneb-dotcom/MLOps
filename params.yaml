@@ -1,0 +1,19 @@
+# Training parameters
+train:
+  test_size: 0.2
+  use_smote: true
+  random_state: 42
+
+# Model parameters
+model:
+  max_depth: 6
+  learning_rate: 0.1
+  n_estimators: 200
+  objective: "binary:logistic"
+  eval_metric: "auc"
+
+# Monitoring thresholds
+monitoring:
+  fraud_rate_min: 0.001
+  fraud_rate_max: 0.5
+  drift_threshold: 0.05

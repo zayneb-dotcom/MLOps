@@ -1,0 +1,40 @@
+# DVC configuration
+stages:
+  validate:
+    cmd: python scripts/validate_data.py --input data/raw/fraudTest.csv --output data/raw/fraudTest_validated.csv
+    deps:
+      - scripts/validate_data.py
+      - data/raw/fraudTest.csv
+    outs:
+      - data/raw/fraudTest_validated.csv
+
+  preprocess:
+    cmd: python scripts/preprocess.py --input data/raw/fraudTest_validated.csv --output data/processed/transactions_clean.csv --scaler models/scaler.pkl
+    deps:
+      - scripts/preprocess.py
+      - data/raw/fraudTest_validated.csv
+    outs:
+      - data/processed/transactions_clean.csv
+      - models/scaler.pkl
+
+  feature_engineering:
+    cmd: python scripts/feature_engineering.py --input data/processed/transactions_clean.csv --output data/features/transactions_features.parquet
+    deps:
+      - scripts/feature_engineering.py
+      - data/processed/transactions_clean.csv
+    outs:
+      - data/features/transactions_features.parquet
+
+  train:
+    cmd: python scripts/train_model.py --input data/features/transactions_features.parquet --model models/xgboost_fraud_model.pkl --experiment fraud_detection
+    deps:
+      - scripts/train_model.py
+      - data/features/transactions_features.parquet
+    params:
+      - train.test_size
+      - train.use_smote
+    outs:
+      - models/xgboost_fraud_model.pkl
+    metrics:
+      - mlruns/:
+          cache: false
