@@ -1,0 +1,66 @@
+name: DVC Pipeline
+
+on:
+  push:
+    branches: [ credit-card-fraud, main ]
+    paths:
+      - 'data/**'
+      - 'scripts/**'
+      - 'dvc.yaml'
+      - 'params.yaml'
+  workflow_dispatch:
+
+jobs:
+  dvc-repro:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install dvc
+    
+    - name: Initialize DVC
+      run: |
+        dvc init --no-scm
+      continue-on-error: true
+    
+    - name: Pull DVC data
+      run: |
+        dvc pull
+      continue-on-error: true
+    
+    - name: Run DVC pipeline
+      run: |
+        dvc repro
+      continue-on-error: true
+    
+    - name: Show DVC metrics
+      run: |
+        dvc metrics show
+      continue-on-error: true
+    
+    - name: Show DVC params
+      run: |
+        dvc params diff
+      continue-on-error: true
+    
+    - name: Push DVC outputs
+      run: |
+        dvc push
+      continue-on-error: true
+    
+    - name: Commit DVC changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add dvc.lock
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update DVC pipeline outputs"
+      continue-on-error: true

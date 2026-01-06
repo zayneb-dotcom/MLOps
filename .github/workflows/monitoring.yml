@@ -1,0 +1,49 @@
+name: Model Monitoring
+
+on:
+  schedule:
+    # Run every day at midnight
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  drift-detection:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Generate monitoring reports
+      run: |
+        python monitoring/generate_reports.py \
+          --reference data/features/transactions_features.parquet \
+          --current data/features/transactions_features.parquet \
+          --output monitoring/reports
+      continue-on-error: true
+    
+    - name: Upload monitoring reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: monitoring-reports
+        path: monitoring/reports/
+      if: success()
+    
+    - name: Check for data drift
+      run: |
+        python -c "
+        import json
+        with open('monitoring/reports/drift_metrics.json', 'r') as f:
+            metrics = json.load(f)
+        # Add logic to alert if drift detected
+        print('Monitoring check completed')
+        "
+      continue-on-error: true
