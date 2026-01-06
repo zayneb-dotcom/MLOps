@@ -1,9 +1,9 @@
 # .gitignore for MLOps project
 
-# DVC
-/data/raw/fraudTest.csv
-/data/processed/
-/data/features/
+# DVC - Don't push data files
+/data/
+*.csv
+*.parquet
 /models/*.pkl
 
 # Python
